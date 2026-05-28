@@ -1,16 +1,843 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Sitio en GitHub Pages</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f9; padding: 50px; }
-        h1 { color: #333; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard de Parcela</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap");
+
+    :root {
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --line: #e2e5e9;
+      --text: #1f2429;
+      --muted: #5f6873;
+      --primary: #2f6f4b;
+      --primary-2: #3b8a5c;
+      --ok: #2f8f57;
+      --warn: #ad7c1d;
+      --danger: #b9473f;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      position: relative;
+      background-color: #eef3ef;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(106deg, rgba(170, 214, 191, 0.36) 0 30%, rgba(170, 214, 191, 0) 30% 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08));
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      right: -130px;
+      bottom: -120px;
+      width: 430px;
+      height: 430px;
+      border-radius: 50%;
+      background: rgba(235, 201, 145, 0.36);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    .credits p.title,
+    .hero-top {
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    .wrap {
+      width: min(1140px, 94vw);
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      padding: 18px 0 10px;
+    }
+
+    .hero-intro {
+      position: relative;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(172, 201, 184, 0.45);
+      border-radius: 16px;
+      padding: 14px 18px;
+      overflow: hidden;
+    }
+
+    .hero-intro::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(180deg, #2e8b69 0%, #1f6a51 100%);
+      border-radius: 16px 0 0 16px;
+    }
+
+    .hero-top {
+      margin: 0;
+      color: #9b7924;
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 9px 0 7px;
+      font-size: clamp(1.95rem, 2.35vw, 2.083rem);
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+      color: #1f7c5f;
+    }
+
+    .hero-desc {
+      margin: 0;
+      color: #4e616e;
+      font-size: 1.04rem;
+    }
+
+    .main-panel {
+      margin-top: 14px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(172, 201, 184, 0.45);
+      border-radius: 16px;
+      padding: 16px 18px;
+      overflow: hidden;
+    }
+
+    .main-panel::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(180deg, #2e8b69 0%, #1f6a51 100%);
+      border-radius: 16px 0 0 16px;
+    }
+
+    .main-panel h2 {
+      margin: 0;
+      font-size: 1.35rem;
+      color: #1f7c5f;
+    }
+
+    .main-panel p {
+      margin: 10px 0 0;
+      color: #425563;
+      line-height: 1.55;
+      font-size: 1rem;
+    }
+
+    .attention-note {
+      margin: 14px 0 0;
+      padding: 12px 14px;
+      border-left: 4px solid #d19a2e;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255, 245, 223, 0.9), rgba(255, 250, 238, 0.92));
+      color: #5a4a2b;
+      box-shadow: inset 0 0 0 1px rgba(209, 154, 46, 0.2);
+    }
+
+    .attention-note-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.92rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #8a651b;
+    }
+
+    .attention-note p {
+      margin: 8px 0 0;
+      color: #5a4a2b;
+    }
+
+    .model-panel {
+      padding-top: 12px;
+    }
+
+    .model-toggle {
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: inherit;
+      font: inherit;
+    }
+
+    .model-toggle h2 {
+      margin: 0;
+    }
+
+    .model-toggle-icon {
+      width: 30px;
+      height: 30px;
+      flex: 0 0 30px;
+      border-radius: 999px;
+      border: 1px solid rgba(52, 93, 74, 0.35);
+      color: #2a6f53;
+      display: grid;
+      place-items: center;
+      font-size: 1.05rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .model-content {
+      margin-top: 6px;
+    }
+
+    .model-content[hidden] {
+      display: none;
+    }
+
+    .model-tags {
+      margin: 12px 0 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag-pill {
+      border: 1px solid rgba(40, 106, 78, 0.25);
+      background: rgba(46, 139, 105, 0.1);
+      color: #1f6a50;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .model-links {
+      margin: 12px 0 2px;
+      padding-left: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .model-links li {
+      margin: 0;
+      color: #334753;
+    }
+
+    .model-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 6px 12px;
+      transition: transform 0.14s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .model-links a::after {
+      content: "🔗";
+      font-size: 0.78em;
+      line-height: 1;
+    }
+
+    .models-index {
+      margin-top: 16px;
+      border-top: 1px solid rgba(175, 198, 186, 0.55);
+      padding-top: 12px;
+    }
+
+    .models-index h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      color: #1f7c5f;
+    }
+
+    .models-index ul {
+      margin: 10px 0 0;
+      padding-left: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .models-index li {
+      margin: 0;
+      color: #334753;
+    }
+
+    .models-index a {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 6px 12px;
+      transition: transform 0.14s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    
+    /* Variante 1: enlaces sobrios */
+    body.links-sober .models-index a {
+      border: 1px solid rgba(31, 124, 95, 0.24);
+      background: rgba(255, 255, 255, 0.75);
+      color: #1f6a50;
+    }
+
+    body.links-sober .models-index a:hover,
+    body.links-sober .models-index a:focus-visible {
+      background: rgba(31, 124, 95, 0.12);
+      border-color: rgba(31, 124, 95, 0.35);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    body.links-sober .model-links a {
+      border: 1px solid rgba(33, 99, 171, 0.24);
+      background: rgba(255, 255, 255, 0.78);
+      color: #1f5fa4;
+    }
+
+    body.links-sober .model-links a:hover,
+    body.links-sober .model-links a:focus-visible {
+      background: rgba(33, 99, 171, 0.12);
+      border-color: rgba(33, 99, 171, 0.35);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    /* Variante 2: enlaces premium (activa por defecto) */
+    body.links-premium .models-index a {
+      border: 1px solid rgba(31, 124, 95, 0.28);
+      background: linear-gradient(180deg, rgba(31, 124, 95, 0.16), rgba(31, 124, 95, 0.08));
+      color: #1d6e54;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    body.links-premium .models-index a:hover,
+    body.links-premium .models-index a:focus-visible {
+      background: linear-gradient(180deg, rgba(31, 124, 95, 0.24), rgba(31, 124, 95, 0.14));
+      box-shadow: 0 6px 14px rgba(31, 124, 95, 0.16);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    body.links-premium .model-links a {
+      border: 1px solid rgba(33, 99, 171, 0.3);
+      background: linear-gradient(180deg, rgba(33, 99, 171, 0.18), rgba(33, 99, 171, 0.09));
+      color: #1e5ca0;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    body.links-premium .model-links a:hover,
+    body.links-premium .model-links a:focus-visible {
+      background: linear-gradient(180deg, rgba(33, 99, 171, 0.26), rgba(33, 99, 171, 0.16));
+      box-shadow: 0 6px 14px rgba(33, 99, 171, 0.18);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .filters {
+      margin-top: 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      font-size: 0.9rem;
+      color: #3f5548;
+    }
+
+    .field input {
+      border: 1px solid #cad6cc;
+      border-radius: 8px;
+      padding: 10px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .btn {
+      border: 1px solid #2b6746;
+      color: #fff;
+      background: linear-gradient(180deg, var(--primary-2), var(--primary));
+      border-radius: 8px;
+      padding: 10px 14px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-secondary {
+      border: 1px solid #c5d5c8;
+      background: #fff;
+      color: #284235;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+    }
+
+    .status-line {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #486355;
+    }
+
+    .diag {
+      margin-top: 8px;
+    }
+
+    .grid-2 {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .grid-main {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .stats-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .metric {
+      border: 1px solid #dce5dd;
+      border-radius: 9px;
+      padding: 9px;
+      background: #fafcfb;
+    }
+
+    .metric .k {
+      font-size: 0.78rem;
+      color: #4f6558;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric .v {
+      margin-top: 4px;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .delta { font-size: 0.84rem; margin-left: 6px; font-weight: 700; }
+    .ok { color: var(--ok); }
+    .warn { color: var(--warn); }
+    .danger { color: var(--danger); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .stat {
+      border: 1px solid #dde6de;
+      border-radius: 9px;
+      padding: 8px;
+      background: #fbfdfc;
+    }
+
+    .stat h3 {
+      margin: 0 0 8px;
+      font-size: 0.94rem;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      color: #4f6257;
+      margin-top: 4px;
+    }
+
+    .assistant {
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: #334a3d;
+    }
+
+    .history {
+      height: 180px;
+      border: 1px solid #dce5dd;
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(24, 1fr);
+      gap: 4px;
+      align-items: end;
+      background: #fcfefd;
+    }
+
+    .bar {
+      border-radius: 3px 3px 0 0;
+      background: #4f9a6b;
+      min-height: 12px;
+    }
+
+    .credits {
+      margin: 14px 0 8px;
+      background:
+        radial-gradient(360px 220px at 75% 40%, rgba(53, 133, 97, 0.28), transparent 72%),
+        linear-gradient(120deg, #051f1a 0%, #083128 50%, #0b3a2e 100%);
+      border: 1px solid rgba(157, 199, 176, 0.24);
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      box-shadow: 0 10px 26px rgba(6, 35, 27, 0.22);
+    }
+
+    .credits p.title {
+      margin: 0 0 6px;
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: #9fc8b4;
+      text-transform: uppercase;
+      letter-spacing: 0.0864em;
+    }
+
+    .credits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .credit-item {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding: 8px 0;
+      background: rgba(17, 50, 40, 0.5);
+      border: 1px solid rgba(146, 194, 168, 0.2);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .credit-item img {
+      width: 92px;
+      height: 92px;
+      object-fit: contain;
+      flex: 0 0 auto;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(163, 205, 182, 0.22);
+      border-radius: 14px;
+      padding: 8px;
+    }
+
+    .credit-copy h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.12;
+      font-weight: 700;
+      color: #ecf7ef;
+    }
+
+    .credit-copy p {
+      margin: 4px 0 0;
+      color: #c6ddd2;
+      font-size: 0.9rem;
+      line-height: 1.35;
+      font-weight: 400;
+    }
+
+    .credit-copy a {
+      color: #81d2a5;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      overflow-wrap: anywhere;
+      font-weight: 700;
+    }
+
+    .entities {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.79rem;
+      font-weight: 700;
+      color: #d2e8dc;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+    }
+
+    .entities span {
+      border: 1px solid rgba(154, 196, 173, 0.35);
+      background: rgba(14, 46, 36, 0.5);
+      border-radius: 999px;
+      padding: 3px 10px;
+      line-height: 1;
+    }
+
+    footer {
+      margin-top: 8px;
+      border-top: 1px solid #d7e1d9;
+      background: #f8fbf8;
+      color: #365042;
+      font-size: 0.9rem;
+    }
+
+    .footer-inner {
+      padding: 12px 0;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .grid-main { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stats-pair { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .filters-grid { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .credits-grid { grid-template-columns: 1fr; }
+      .credit-item { flex-direction: column; align-items: flex-start; }
+      .credit-item img { width: 92px; height: 92px; }
+      .credit-copy h2 { font-size: 1.15rem; }
+      .main-panel h2 { font-size: 1.2rem; }
+    }
+  </style>
 </head>
-<body>
-    <h1>¡Hola mundo desde GitHub Pages!</h1>
-    <p>Esta es mi primera página web alojada gratis.</p>
+<body class="links-premium">
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-intro">
+        <p class="hero-top">CitriData. Córdoba FIWARE DTL</p>
+        <h1>Repositorio Principal de CitriData</h1>
+        <p class="hero-desc">Control de versiones para servicios y productos del DS CitriData.</p>
+      </div>
+
+      <article class="main-panel" aria-label="Introduccion y modelos de datos">
+        <h2>Introducción</h2>
+        <p>
+          El diseño de los modelos de datos para el espacio de datos <strong>CitriData</strong>
+          de la Universidad de Córdoba (UCO) es una pieza clave para garantizar la
+          interoperabilidad, la soberanía del dato y la escalabilidad dentro del sector
+          citrícola andaluz. Al integrarse en la estrategia de espacios de datos modernos
+          (siguiendo principios de Gaia-X e International Data Spaces), CitriData no solo
+          busca almacenar información, sino permitir que diferentes actores intercambien
+          datos de forma estandarizada y segura.
+        </p>
+        <aside class="attention-note" aria-label="Nota de atención">
+          <h3 class="attention-note-title">Aviso estratégico</h3>
+          <p>
+            La adopción de los Smart Data Models (la iniciativa global coliderada por la
+            Fundación FIWARE, TM Forum, IUDI y la Open Agile Smart Cities) como base tecnológica
+            para <strong>CitriData</strong> es una decisión estratégica desde sus inicios. No se trata solo de usar un estándar por
+            cumplir con una normativa, sino de aprovechar un ecosistema ya maduro que resuelve el gran
+            dolor de cabeza de los espacios de datos: la interoperabilidad semántica.
+          </p>
+        </aside>
+        
+      </article>
+
+      <article id="modelo-international-citrus-trade" class="main-panel model-panel" aria-label="Modelo InternationalCitrusTrade">
+        <button class="model-toggle" type="button" aria-expanded="true" aria-controls="model-content-international-citrus-trade">
+          <h2>InternationalCitrusTrade</h2>
+          <span class="model-toggle-icon">−</span>
+        </button>
+
+        <div id="model-content-international-citrus-trade" class="model-content">
+          <p>
+            El modelo de datos <strong>InternationalCitrusTrade</strong> es una especificación semántica pionera diseñada por la
+            Universidad de Córdoba en el marco del espacio de datos CitriData. Su propósito principal es tender un
+            puente digital entre la realidad agronómica del campo andaluz y las exigencias del mercado agroalimentario
+            global.
+          </p>
+
+          <p>
+            <em>
+              Para lograr una estandarización rigurosa y con validez global, este modelo se ha construido basándose en
+              la estructura y clasificaciones de UN Comtrade (la base de datos estadística de comercio internacional
+              de las Naciones Unidas). Al integrar las codificaciones internacionales oficiales (como el Sistema
+              Armonizado - SA para la clasificación de mercancías), CitriData asegura que las transacciones y flujos
+              comerciales modelados en la plataforma correspondan exactamente con los estándares macroeconómicos
+              mundiales.
+            </em>
+          </p>
+
+          <div class="model-tags" aria-label="Etiquetas del modelo">
+            <span class="tag-pill">Comercio Internacional</span>
+            <span class="tag-pill">UN Comtrade</span>
+          </div>
+
+          <ul class="model-links">
+            <li><a href="#modelo-international-citrus-trade">InternationalCitrusTrade</a></li>
+          </ul>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="credits" aria-label="Creditos">
+      <p class="title">Creditos</p>
+
+      <div class="credits-grid">
+        <article class="credit-item">
+          <img src="https://www.uco.es/investigacion/proyectos/citridata/wp-content/uploads/2025/06/logo.png" alt="Logo CitriData" />
+          <div class="credit-copy">
+            <h2>CitriData</h2>
+            <p>
+              Espacio de Datos Federados, Modelos y Servicios.
+              <a href="https://uco.es/citridata" target="_blank" rel="noopener noreferrer">https://uco.es/citridata</a>
+            </p>
+          </div>
+        </article>
+
+        <article class="credit-item">
+          <img src="https://www.uco.es/atdfiware/images/logo-iron-atdfiware.png" alt="Logo Aula de Transformacion Digital FIWARE" />
+          <div class="credit-copy">
+            <h2>Aula de Transformación Digital FIWARE</h2>
+            <p>
+              Web de monitorización en tiempo real con datos de la plataforma AgroFIWARE.
+              <a href="https://uco.es/atdfiware" target="_blank" rel="noopener noreferrer">https://uco.es/atdfiware</a>
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <div class="entities" aria-label="Entidades colaboradoras">
+        <span>CITRIDATA</span>
+        <span>CORDOBA FIWARE DTL</span>
+        <span>UNIVERSIDAD DE CORDOBA</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const modelToggles = Array.from(document.querySelectorAll('.model-toggle'));
+
+    function setModelState(toggle, expanded) {
+      const targetId = toggle.getAttribute('aria-controls');
+      const content = document.getElementById(targetId);
+      if (!content) return;
+
+      toggle.setAttribute('aria-expanded', String(expanded));
+      content.hidden = !expanded;
+
+      const icon = toggle.querySelector('.model-toggle-icon');
+      if (icon) {
+        icon.textContent = expanded ? '−' : '+';
+      }
+    }
+
+    modelToggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+
+        if (isExpanded) {
+          setModelState(toggle, false);
+          return;
+        }
+
+        modelToggles.forEach((otherToggle) => {
+          setModelState(otherToggle, otherToggle === toggle);
+        });
+      });
+    });
+  </script>
+
 </body>
 </html>
+
